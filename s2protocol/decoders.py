@@ -51,11 +51,11 @@ class BitPackedBuffer:
     def byte_align(self):
         self._nextbits = 0
 
-    def read_aligned_bytes(self, bytes):
+    def read_aligned_bytes(self, bytes_):
         self.byte_align()
-        data = self._data[self._used:self._used + bytes]
-        self._used += bytes
-        if len(data) != bytes:
+        data = self._data[self._used:self._used + bytes_]
+        self._used += bytes_
+        if len(data) != bytes_:
             raise TruncatedError(self)
         return data
 
@@ -96,7 +96,6 @@ class BitPackedDecoder:
         if typeid >= len(self._typeinfos):
             raise CorruptedError(self)
         typeinfo = self._typeinfos[typeid]
-        #print ' -- instance ', typeid, typeinfo
         return getattr(self, typeinfo[0])(*typeinfo[1])
 
     def byte_align(self):

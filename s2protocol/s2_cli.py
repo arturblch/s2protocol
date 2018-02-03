@@ -212,6 +212,8 @@ def main():
                         action="store_true")
     parser.add_argument("--initdata_backup", help="print protocol initdata",
                         action="store_true")
+    parser.add_argument("--load_data", help="print protocol loaddata",
+                        action="store_true")
     parser.add_argument("--all", help="print all data",
                         action="store_true")
     parser.add_argument("--quiet", help="disable printing",
@@ -342,10 +344,15 @@ def main():
         initdata = process_init_data(initdata)
         process_event(initdata)
 
+    if args.all or args.load_data:
+        contents = read_contents(archive, 'replay.load.info')
+        process_event(contents)
+
     # Print game events and/or game events stats
     if args.all or args.gameevents:
         contents = read_contents(archive, 'replay.game.events')
-        map(process_event, protocol.decode_replay_game_events(contents))
+        for event in  protocol.decode_replay_game_events(contents):
+            process_event(event)
 
     # Print message events
     if args.all or args.messageevents:
